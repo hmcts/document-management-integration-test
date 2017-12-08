@@ -20,7 +20,7 @@ node {
             sh 'echo Running integration tests on Test'
             build job: 'evidence/integration-tests-pipeline/master', parameters: [
                     [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: 'test'],
-                    [$class: 'StringParameterValue', name: 'BRANCH', value: "${env.CHANGE_BRANCH}"]
+                    [$class: 'StringParameterValue', name: 'BRANCH', value: "${env.BRANCH_NAME}"]
             ]
         }
 

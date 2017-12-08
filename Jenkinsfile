@@ -1,26 +1,34 @@
 #!groovy
 
 properties([
-        [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/hmcts/document-management-intergation-tests/'],
-        pipelineTriggers([
-                [$class: 'GitHubPushTrigger']
-        ])
+    [
+        $class: 'GithubProjectProperty',
+        displayName: 'Document Management Integration Tests',
+        projectUrlStr: 'https://github.com/hmcts/document-management-integration-tests/'
+    ],
+    pipelineTriggers([
+        [$class: 'GitHubPushTrigger']
+    ])
 ])
 
 @Library('Reform') _
+
+String channel = '#dm-pipeline'
 
 node {
     try{
 
         stage('Checkout') {
+            deleteDir()
+            sh "echo ${env.BRANCH}"
             checkout scm
         }
 
         stage('Run against Test') {
             sh 'echo Running integration tests on Test'
             build job: 'evidence/integration-tests-pipeline/master', parameters: [
-                    [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: 'test'],
-                    [$class: 'StringParameterValue', name: 'BRANCH', value: "${env.BRANCH_NAME}"]
+                [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: 'test'],
+                [$class: 'StringParameterValue', name: 'BRANCH', value: "${env.BRANCH_NAME}"]
             ]
         }
 
@@ -30,11 +38,9 @@ node {
             }
         }
 
-    } catch (err){
-        slackSend(
-                channel: '#dm-pipeline',
-                color: 'danger',
-                message: "${env.JOB_NAME}:  <${env.BUILD_URL}console|Build ${env.BUILD_DISPLAY_NAME}> has FAILED")
-        throw err
+    } catch (e){
+        notifyBuildFailure channel: channel
+        throw e
     }
+    notifyBuildFixed channel: channel
 }

@@ -33,25 +33,25 @@ class DeleteDocumentIT extends BaseIT {
 
         givenRequest(CITIZEN)
             .expect()
-                .statusCode(405)
+                .statusCode(410)
             .when()
                 .delete(documentUrl)
 
         givenRequest(CITIZEN_2)
                 .expect()
-                .statusCode(405)
+                .statusCode(410)
                 .when()
                 .delete(documentUrl)
 
         givenRequest(CASE_WORKER)
                 .expect()
-                .statusCode(405)
+                .statusCode(410)
                 .when()
                 .delete(documentUrl)
 
         givenRequest(CASE_WORKER)
                 .expect()
-                .statusCode(405)
+                .statusCode(410)
                 .when()
                 .delete(documentUrl1)
 

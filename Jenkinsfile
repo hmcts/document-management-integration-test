@@ -15,7 +15,7 @@ properties([
 
 String channel = '#dm-pipeline'
 
-def branchName = ('master' == "${env.BRANCH_NAME}") ? ${env.BRANCH_NAME} : ${env.CHANGE_BRANCH}
+def branchName = ('master' == "${env.BRANCH_NAME}") ? "${env.BRANCH_NAME}" : "${env.CHANGE_BRANCH}"
 
 node {
     try{

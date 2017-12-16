@@ -1,3 +1,3 @@
-base-urls.em-api=${EM_BASE_URI:http://localhost:8080}
+base-urls.em-api=${DM_GW_BASE_URI:http://localhost:8080}
 base-urls.idam-user=${IDAM_USER_BASE_URI:http://localhost:8081}
-base-urls.idam=${IDAM_BASE_URI:http://localhost:8082}
+base-urls.idam=${IDAM_S2S_BASE_URI:http://localhost:8082}

@@ -50,13 +50,13 @@ public class AuthTokenProvider {
                 .statusCode(204);
     }
 
-    private String findServiceToken() {
-        return RestAssured
-                .given().baseUri(idamBaseUri)
-                .body("microservice=sscs")
-                .post("testing-support/lease?role=test&id=1&microservice=sscs")
-                .andReturn().asString();
-    }
+//    private String findServiceToken() {
+//        return RestAssured
+//                .given().baseUri(idamBaseUri)
+//                .body("microservice=sscs")
+//                .post("testing-support/lease?role=test&id=1&microservice=sscs")
+//                .andReturn().asString();
+//    }
 
     private String findUserToken(String email, String password) {
         final String encoded = Base64.getEncoder().encodeToString((email + ":" + password).getBytes());

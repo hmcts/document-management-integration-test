@@ -337,4 +337,18 @@ class ReadDocumentIT extends BaseIT {
                 .when()
                 .get(documentUrl)
     }
+
+    @Test
+    void "R23 As an Owner with no role I can access a document even if its CLASSIFICATION is private and role as caseworker"() {
+
+        createUser(CITIZEN_2, null)
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN_2, ATTACHMENT_1, 'PRIVATE', ['caseworker']
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+    }
 }

@@ -239,7 +239,93 @@ class ReadDocumentIT extends BaseIT {
     }
 
     @Test
-    void "R16 As authenticated user with a specific role I can't access a document if its CLASSIFICATION is restricted and roles don't match"() {
+    void "R16 As authenticated user with a specific role I can access a document if its CLASSIFICATION is public and roles match"() {
+
+        createUser(CITIZEN_2, 'caseworker')
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', ['caseworker']
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+
+    }
+
+    @Test
+    void "R17 As authenticated user with a specific role I can access a document if its CLASSIFICATION is public and matches role"() {
+
+        createUser(CITIZEN_2, 'caseworker')
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', ['citizen', 'caseworker']
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+    }
+
+    @Test
+    void "R18 As authenticated user with no role I cannot access a document if its CLASSIFICATION is public with no role"() {
+
+        createUser(CITIZEN_2, null)
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', [null]
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(403)
+            .when()
+            .get(documentUrl)
+    }
+
+    @Test
+    void "R19 As authenticated user with some role I can access a document if its CLASSIFICATION is public and roles does not match"() {
+
+        createUser(CITIZEN_2, 'caseworker')
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', [null]
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(403)
+            .when()
+            .get(documentUrl)
+
+    }
+
+    @Test
+    void "R20 As authenticated user with no role (Tests by default sets role as citizen) I can access a document if its CLASSIFICATION is public and roles is citizen"() {
+
+        createUser(CITIZEN_2, null)
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', ['citizen']
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+    }
+
+    @Test
+    void "R21 As an owner I can access a document even if its CLASSIFICATION is private with no roles"() {
+
+        createUser(CITIZEN_2, null)
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN_2, ATTACHMENT_1, 'PRIVATE', [null]
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+    }
+
+    @Test
+    void "R22 As authenticated user with a specific role I can't access a document if its CLASSIFICATION is restricted and roles don't match"() {
 
         createUser(CITIZEN_2, 'citizen')
 
@@ -250,24 +336,19 @@ class ReadDocumentIT extends BaseIT {
                 .statusCode(403)
                 .when()
                 .get(documentUrl)
-
     }
-
-
 
     @Test
-    void "R14 As authenticated user with a specific role I can access a document if its PUBLIC is restricted and roles match"() {
+    void "R23 As an Owner with no role I can access a document even if its CLASSIFICATION is private and role as caseworker"() {
 
-        createUser(CITIZEN_2, 'caseworker')
+        createUser(CITIZEN_2, null)
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', ['caseworker']
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN_2, ATTACHMENT_1, 'PRIVATE', ['caseworker']
 
         givenRequest(CITIZEN_2)
-                .expect()
-                .statusCode(200)
-                .when()
-                .get(documentUrl)
-
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
     }
-
 }

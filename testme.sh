@@ -10,7 +10,8 @@ docker-compose -f docker-compose.yml -f docker-compose-test.yml pull
 docker-compose -f docker-compose.yml -f docker-compose-test.yml build
 docker-compose up -d --build
 
-echo "Waiting for the docker to warm up" #&& sleep 60s
+echo "Waiting for the docker to warm up"
+#sleep 60s
 wget --retry-connrefused --tries=120 --waitretry=1 -O /dev/null ${DM_STORE_BASE_URI}/health
 
 ./idam.sh

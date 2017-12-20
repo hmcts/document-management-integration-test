@@ -17,15 +17,16 @@ import java.util.Optional;
 @Service
 public class AuthTokenProvider {
 
-    private final String idamBaseUri;
+//    private final String idamS2SBaseUri;
     private final String idamUserBaseUrl;
 
     @Autowired
-    public AuthTokenProvider(@Value("${base-urls.idam}") String idamBaseUri,
+    public AuthTokenProvider(@Value("${base-urls.idam-s2s}") String idamS2SBaseUri,
                              @Value("${base-urls.idam-user}") String idamUserBaseUri) {
-        this.idamBaseUri = idamBaseUri;
+//        this.idamS2SBaseUri = idamS2SBaseUri;
         this.idamUserBaseUrl = idamUserBaseUri;
-        System.out.println("IDAM URL - " + idamUserBaseUri);
+        System.out.println("IDAM User URL - " + idamUserBaseUri);
+        System.out.println("IDAM S2S URL - " + idamS2SBaseUri);
     }
 
     public AuthTokens getTokens(String email, String password) {
@@ -52,7 +53,7 @@ public class AuthTokenProvider {
 
 //    private String findServiceToken() {
 //        return RestAssured
-//                .given().baseUri(idamBaseUri)
+//                .given().baseUri(idamS2SBaseUri)
 //                .body("microservice=sscs")
 //                .post("testing-support/lease?role=test&id=1&microservice=sscs")
 //                .andReturn().asString();

@@ -11,15 +11,12 @@ docker-compose -f docker-compose.yml -f docker-compose-test.yml build
 docker-compose up -d --build
 
 echo "Waiting for the docker to warm up"
-REM timeout 130
+timeout 150
 curl --retry-connrefused --retry-delay 140 --retry 1 ${DM_STORE_BASE_URI}/health
 
-idam.bat
-gradlew.bat clean test --info
+call "idam.bat"
+call "gradlew.bat" clean test --info
 REM docker-compose -f docker-compose.yml -f docker-compose-test.yml run -e GRADLE_OPTS document-management-store-integration-tests
 
 start build/reports/tests/test/index.html
-
-
-
 docker-compose down

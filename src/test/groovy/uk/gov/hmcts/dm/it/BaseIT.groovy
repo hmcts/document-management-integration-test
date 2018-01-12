@@ -56,7 +56,7 @@ class BaseIT {
     final String ATTACHMENT_7 = 'png.png'
     final String ATTACHMENT_8 = 'tif.tif'
     final String ATTACHMENT_9 = 'jpg.jpg'
-    final String ATTACHMENT_10 = 'svg.svg'
+    final String ATTACHMENT_10 = 'Attachment1.txt'
     final String ATTACHMENT_11 = 'rtf.rtf'
     final String ATTACHMENT_12 = 'docx.docx'
     final String ATTACHMENT_13 = 'pptx.pptx'
@@ -64,7 +64,7 @@ class BaseIT {
     final String ATTACHMENT_15 = 'odt.odt'
     final String ATTACHMENT_16 = 'ods.ods'
     final String ATTACHMENT_17 = 'odp.odp'
-    final String ATTACHMENT_18 = 'xml.xml'
+    final String ATTACHMENT_18 = 'Attachment1.txt'
     final String ATTACHMENT_19 = 'wav.wav'
     final String ATTACHMENT_20 = 'mid.mid'
     final String ATTACHMENT_21 = 'mp3.mp3'
@@ -159,7 +159,7 @@ class BaseIT {
         createDocument(username, filename, classification, roles)
             .path("_embedded.documents[0]._links.binary.href")
     }
-    
+
     def createDocumentContentVersion(documentUrl, username, filename = null) {
         givenRequest(username)
             .multiPart("file", file( filename ?: ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)

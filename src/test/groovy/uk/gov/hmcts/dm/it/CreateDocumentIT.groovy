@@ -52,6 +52,7 @@ class CreateDocumentIT extends BaseIT {
             .multiPart("files", file(ATTACHMENT_22), V1MimeTypes.VIDEO_WEBM_VALUE)
             .multiPart("files", file(ATTACHMENT_23), V1MimeTypes.VIDEO_OGG_VALUE)
             .multiPart("files", file(ATTACHMENT_24), V1MimeTypes.VIDEO_MPEG_VALUE)
+            .multiPart("files", file(ATTACHMENT_25), V1MimeTypes.IMAGE_TIF_VALUE)
             .multiPart("classification", Classifications.PUBLIC as String)
             .multiPart("roles", "citizen")
             .multiPart("roles", "caseworker")
@@ -111,6 +112,8 @@ class CreateDocumentIT extends BaseIT {
             .body("_embedded.documents[20].mimeType", equalTo(V1MimeTypes.VIDEO_OGG_VALUE))
             .body("_embedded.documents[21].originalDocumentName", equalTo(ATTACHMENT_24))
             .body("_embedded.documents[21].mimeType", equalTo(V1MimeTypes.VIDEO_MPEG_VALUE))
+            .body("_embedded.documents[22].originalDocumentName", equalTo(ATTACHMENT_25))
+            .body("_embedded.documents[22].mimeType", equalTo(V1MimeTypes.IMAGE_TIF_VALUE))
         .when()
             .post("/documents")
 
@@ -255,10 +258,9 @@ class CreateDocumentIT extends BaseIT {
     }
 
     @Test
-    void "CD9 As authenticated user I cannot upload xml and svg files"() {
+    void "CD9 As authenticated user I cannot upload xml file"() {
         givenRequest(CITIZEN)
             .multiPart("files", file(ATTACHMENT_18), MediaType.APPLICATION_XML_VALUE)
-            .multiPart("files", file(ATTACHMENT_10), V1MimeTypes.IMAGE_SVG_VALUE)
             .multiPart("classification", Classifications.PUBLIC as String)
             .multiPart("roles", "caseworker")
             .multiPart("roles", "citizen")
@@ -268,6 +270,18 @@ class CreateDocumentIT extends BaseIT {
             .post("/documents")
     }
 
+    @Test
+    void "CD10 As authenticated user I cannot upload svg file"() {
+        givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_10), V1MimeTypes.IMAGE_SVG_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "caseworker")
+            .multiPart("roles", "citizen")
+            .expect()
+            .statusCode(422)
+            .when()
+            .post("/documents")
+    }
 
 //    @Test
 //    void "CD9 As authenticated user I can not upload files that are larger than 100MB"() {

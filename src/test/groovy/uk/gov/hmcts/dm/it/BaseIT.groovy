@@ -71,6 +71,7 @@ class BaseIT {
     final String ATTACHMENT_22 = 'webm.webm'
     final String ATTACHMENT_23 = 'ogg.ogg'
     final String ATTACHMENT_24 = 'mp4.mp4'
+    final String ATTACHMENT_25 = 'tiff.tiff'
 
 
     final String BAD_ATTACHMENT_1 = '1MB.exe'

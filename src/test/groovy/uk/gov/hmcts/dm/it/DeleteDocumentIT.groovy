@@ -47,7 +47,6 @@ class DeleteDocumentIT extends BaseIT {
             .statusCode(404)
             .when()
             .get(citizenDocumentUrl)
-
     }
 
     @Test
@@ -75,6 +74,21 @@ class DeleteDocumentIT extends BaseIT {
             .statusCode(204)
             .when()
             .delete(caseWorkierDocumentUrl)
+
+        givenRequest(CASE_WORKER)
+            .expect()
+            .statusCode(404)
+            .when()
+            .get(caseWorkierDocumentUrl)
+    }
+
+    @Test
+    void "D6 Case worker can hard delete their own document"() {
+        givenRequest(CASE_WORKER)
+            .expect()
+            .statusCode(204)
+            .when()
+            .delete(caseWorkierDocumentUrl + "?permanent=true")
 
         givenRequest(CASE_WORKER)
             .expect()

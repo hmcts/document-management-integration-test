@@ -10,52 +10,77 @@ import org.springframework.test.context.junit4.SpringRunner
  */
 @RunWith(SpringRunner.class)
 class DeleteDocumentIT extends BaseIT {
+    private citizenDocumentUrl
+    private caseWorkierDocumentUrl
 
     @Before
     public void setup() throws Exception {
         createUser CITIZEN
         createUser CITIZEN_2
         createUser CASE_WORKER
+
+        this.citizenDocumentUrl = createDocumentAndGetUrlAs CITIZEN
+        this.caseWorkierDocumentUrl = createDocumentAndGetUrlAs CASE_WORKER
     }
 
     @Test
-    void "D1 For all users delete is not allowed"() {
+    void "D1 Unauthenticated user cannot delete"() {
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN
-
-        def documentUrl1 = createDocumentAndGetUrlAs CASE_WORKER
 
         givenRequest()
-                .expect()
-                .statusCode(401)
-                .when()
-                .delete(documentUrl)
+            .expect()
+            .statusCode(401)
+            .when()
+            .delete(citizenDocumentUrl)
+    }
+
+    @Test
+    void "D2 Authenticated can delete their own documents"() {
+        givenRequest(CITIZEN)
+            .expect()
+            .statusCode(204)
+            .when()
+            .delete(citizenDocumentUrl)
 
         givenRequest(CITIZEN)
             .expect()
-                .statusCode(410)
+            .statusCode(404)
             .when()
-                .delete(documentUrl)
-
-        givenRequest(CITIZEN_2)
-                .expect()
-                .statusCode(410)
-                .when()
-                .delete(documentUrl)
-
-        givenRequest(CASE_WORKER)
-                .expect()
-                .statusCode(410)
-                .when()
-                .delete(documentUrl)
-
-        givenRequest(CASE_WORKER)
-                .expect()
-                .statusCode(410)
-                .when()
-                .delete(documentUrl1)
+            .get(citizenDocumentUrl)
 
     }
 
+    @Test
+    void "D3 Authenticated cannot delete other users' documents"() {
+        givenRequest(CITIZEN_2)
+                .expect()
+                .statusCode(403)
+                .when()
+                .delete(citizenDocumentUrl)
+    }
+
+    @Test
+    void "D4 Case worker cannot delete other users' documents"() {
+        givenRequest(CASE_WORKER)
+            .expect()
+            .statusCode(403)
+            .when()
+            .delete(citizenDocumentUrl)
+    }
+
+    @Test
+    void "D5 Case worker can delete their own document"() {
+        givenRequest(CASE_WORKER)
+            .expect()
+            .statusCode(204)
+            .when()
+            .delete(caseWorkierDocumentUrl)
+
+        givenRequest(CASE_WORKER)
+            .expect()
+            .statusCode(404)
+            .when()
+            .get(caseWorkierDocumentUrl)
+    }
 
 }

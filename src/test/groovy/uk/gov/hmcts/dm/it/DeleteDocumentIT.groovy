@@ -11,22 +11,20 @@ import org.springframework.test.context.junit4.SpringRunner
 @RunWith(SpringRunner.class)
 class DeleteDocumentIT extends BaseIT {
     private citizenDocumentUrl
-    private caseWorkierDocumentUrl
+    private caseWorkerDocumentUrl
 
     @Before
-    public void setup() throws Exception {
+    void setup() throws Exception {
         createUser CITIZEN
         createUser CITIZEN_2
         createUser CASE_WORKER
 
         this.citizenDocumentUrl = createDocumentAndGetUrlAs CITIZEN
-        this.caseWorkierDocumentUrl = createDocumentAndGetUrlAs CASE_WORKER
+        this.caseWorkerDocumentUrl = createDocumentAndGetUrlAs CASE_WORKER
     }
 
     @Test
     void "D1 Unauthenticated user cannot delete"() {
-
-
         givenRequest()
             .expect()
             .statusCode(401)
@@ -35,7 +33,7 @@ class DeleteDocumentIT extends BaseIT {
     }
 
     @Test
-    void "D2 Authenticated can delete their own documents"() {
+    void "D2 Authenticated user can delete their own documents"() {
         givenRequest(CITIZEN)
             .expect()
             .statusCode(204)
@@ -50,12 +48,12 @@ class DeleteDocumentIT extends BaseIT {
     }
 
     @Test
-    void "D3 Authenticated cannot delete other users' documents"() {
+    void "D3 Authenticated user cannot delete other user's documents"() {
         givenRequest(CITIZEN_2)
-                .expect()
-                .statusCode(403)
-                .when()
-                .delete(citizenDocumentUrl)
+            .expect()
+            .statusCode(403)
+            .when()
+            .delete(citizenDocumentUrl)
     }
 
     @Test
@@ -73,13 +71,13 @@ class DeleteDocumentIT extends BaseIT {
             .expect()
             .statusCode(204)
             .when()
-            .delete(caseWorkierDocumentUrl)
+            .delete(caseWorkerDocumentUrl)
 
         givenRequest(CASE_WORKER)
             .expect()
             .statusCode(404)
             .when()
-            .get(caseWorkierDocumentUrl)
+            .get(caseWorkerDocumentUrl)
     }
 
     @Test
@@ -88,13 +86,27 @@ class DeleteDocumentIT extends BaseIT {
             .expect()
             .statusCode(204)
             .when()
-            .delete(caseWorkierDocumentUrl + "?permanent=true")
+            .delete(caseWorkerDocumentUrl + "?permanent=true")
 
         givenRequest(CASE_WORKER)
             .expect()
             .statusCode(404)
             .when()
-            .get(caseWorkierDocumentUrl)
+            .get(caseWorkerDocumentUrl)
     }
 
+    @Test
+    void "D7 User can hard delete their own document"() {
+        givenRequest(CITIZEN)
+            .expect()
+            .statusCode(204)
+            .when()
+            .delete(citizenDocumentUrl + "?permanent=true")
+
+        givenRequest(CITIZEN)
+            .expect()
+            .statusCode(404)
+            .when()
+            .get(citizenDocumentUrl)
+    }
 }

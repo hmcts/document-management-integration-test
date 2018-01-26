@@ -18,6 +18,7 @@ class UpdateDocumentIT  extends BaseIT {
     void setup() {
         createUser CITIZEN
         createUser CITIZEN_2
+        createCaseWorker CASE_WORKER
     }
 
     @Test
@@ -36,21 +37,35 @@ class UpdateDocumentIT  extends BaseIT {
 
     }
 
-//    @Test
-//    void "UD2 update TTL for a Document that I don't own"() {
-//
-//        def documentUrl = createDocumentAndGetUrlAs CITIZEN
-//
-//        givenRequest(CITIZEN_2)
-//            .body([ttl: "3000-10-31T10:10:10+0000"])
-//            .contentType(ContentType.JSON)
-//            .expect()
-//                .statusCode(403)
-//                .body("ttl", equalTo("3000-10-31T10:10:10.000+0000"))
-//            .when()
-//                .patch(documentUrl)
-//
-//    }
+    @Test
+    void "UD2 fail to update TTL for a Document that I don't own"() {
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN
+
+        givenRequest(CITIZEN_2)
+            .body([ttl: "3000-10-31T10:10:10+0000"])
+            .contentType(ContentType.JSON)
+            .expect()
+                .statusCode(403)
+            .when()
+                .patch(documentUrl)
+
+    }
+
+    @Test
+    void "UD3 fail to update TTL for a Document by a caseworker"() {
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN
+
+        givenRequest(CASE_WORKER)
+            .body([ttl: "3000-10-31T10:10:10+0000"])
+            .contentType(ContentType.JSON)
+            .expect()
+            .statusCode(403)
+            .when()
+            .patch(documentUrl)
+
+    }
 
 
 }

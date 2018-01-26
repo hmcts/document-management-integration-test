@@ -125,7 +125,8 @@ class BaseIT {
     }
 
     def authToken(username) {
-        authTokenProvider.getTokens(username, PASSWORD).getUserToken()
+        def token = authTokenProvider.getTokens(username, PASSWORD).getUserToken()
+        token
     }
 
     def createDocument(username,  filename = null, classification = null, roles = null, metadata = null) {

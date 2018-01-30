@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dm.it
 
 import io.restassured.RestAssured
+import io.restassured.response.Response
 import net.jcip.annotations.NotThreadSafe
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.After
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
+import uk.gov.hmcts.dm.it.utilities.Classifications
 import uk.gov.hmcts.dm.it.utilities.FileUtils
 import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
 
@@ -17,6 +19,11 @@ import uk.gov.hmcts.dm.it.config.TestContextConfiguration
 
 import static io.restassured.RestAssured.given
 import static io.restassured.RestAssured.expect
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.equalTo
 
 /**
  * Created by pawel on 16/10/2017.
@@ -210,6 +217,26 @@ class BaseIT {
         }
     }
 
+    def CreateAUserforTTL(username)
+    {
+        Response response = givenRequest(username)
+            .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .multiPart("roles", "caseworker")
+            .multiPart("ttl", "2018-10-31T10:10:10+0000")
+            .expect().log().all()
+            .statusCode(200)
+            .contentType(V1MediaTypes.V1_HAL_DOCUMENT_COLLECTION_MEDIA_TYPE_VALUE)
+            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_1))
+            .body("_embedded.documents[0].mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+            .body("_embedded.documents[0].classification", equalTo(Classifications.PUBLIC as String))
+            .body("_embedded.documents[0].roles[0]", equalTo("caseworker"))
+            .body("_embedded.documents[0].ttl", equalTo("2018-10-31T10:10:10.000+0000"))
+            .when()
+            .post("/documents")
 
+        response
+    }
 
 }

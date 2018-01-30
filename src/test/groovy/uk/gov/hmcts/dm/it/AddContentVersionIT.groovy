@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dm.it
 
+import io.restassured.response.Response
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,6 +19,7 @@ class AddContentVersionIT extends BaseIT {
     @Before
     public void setup() throws Exception {
         createUser CITIZEN
+        createUser CASE_WORKER
     }
 
     @Test
@@ -205,5 +207,31 @@ class AddContentVersionIT extends BaseIT {
                 .statusCode(422)
                 .when()
                 .post(documentURL)
+    }
+
+    @Test
+    void "ACV12 As an owner I cannot update the TTL while adding a version to the document"()
+    {
+        Response response = CreateAUserforTTL CASE_WORKER
+
+        String documentUrl1 = response.path("_embedded.documents[0]._links.self.href")
+
+        givenRequest(CASE_WORKER)
+            .multiPart("file", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("ttl", "2018-01-31T10:10:10+0000")
+            .expect().log().all()
+            .statusCode(201)
+            .contentType(V1MediaTypes.V1_HAL_DOCUMENT_CONTENT_VERSION_MEDIA_TYPE_VALUE)
+            .body("originalDocumentName", equalTo(ATTACHMENT_1))
+            .body("mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+            .when()
+            .post(documentUrl1)
+
+        givenRequest(CASE_WORKER)
+            .expect().log().all()
+            .statusCode(200)
+            .body("ttl", equalTo("2018-10-31T10:10:10.000+0000"))
+            .when()
+            .get(documentUrl1)
     }
 }

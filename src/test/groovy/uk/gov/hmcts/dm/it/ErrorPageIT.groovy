@@ -1,12 +1,17 @@
 package uk.gov.hmcts.dm.it
 
 import io.restassured.http.ContentType
+import org.hamcrest.CoreMatchers
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
+import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
+
+import static org.hamcrest.CoreMatchers.containsString
+import static org.hamcrest.CoreMatchers.not
 import static org.hamcrest.Matchers.equalTo
 
 /**
@@ -101,6 +106,50 @@ class ErrorPageIT extends BaseIT {
                 .statusCode(403)
                 .when()
                 .post(url)
+    }
+
+    @Test
+    void "EP7 As an unauthenticated api user trying to access a document with accept JSON, receive JSON error"() {
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN
+
+        givenRequest()
+            .accept(ContentType.JSON)
+            .expect()
+            .contentType(ContentType.JSON)
+            .body(not(containsString("<!DOCTYPE html>")))
+            .statusCode(401)
+            .when()
+            .get(documentUrl)
+    }
+
+    @Test
+    void "EP8 As an unauthenticated api user trying to access a document with no accept header, receive JSON error"() {
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN
+
+        givenRequest()
+            .expect()
+            .contentType(ContentType.JSON)
+            .body(not(containsString("<!DOCTYPE html>")))
+            .statusCode(401)
+            .when()
+            .get(documentUrl)
+    }
+
+    @Test
+    void "EP9 As an unauthenticated api user trying to access a document with document accept header, receive JSON error"() {
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN
+
+        givenRequest()
+            .accept(V1MediaTypes.V1_HAL_DOCUMENT_MEDIA_TYPE_VALUE)
+            .expect()
+            .contentType(ContentType.JSON)
+            .body(not(containsString("<!DOCTYPE html>")))
+            .statusCode(401)
+            .when()
+            .get(documentUrl)
     }
 
 }

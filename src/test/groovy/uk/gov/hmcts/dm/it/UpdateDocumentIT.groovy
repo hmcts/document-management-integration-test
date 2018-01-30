@@ -64,7 +64,22 @@ class UpdateDocumentIT  extends BaseIT {
             .statusCode(403)
             .when()
             .patch(documentUrl)
+    }
 
+    @Test
+    void "UD4 when updating a ttl the last ttl will be taken into consideration (if more than one are in a body)"() {
+
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN
+
+        givenRequest(CITIZEN)
+            .body([ttl: "3000-10-31T10:10:10+0000"])
+            .body([ttl: "3000-01-31T10:10:10+0000"])
+            .contentType(ContentType.JSON)
+            .expect()
+            .statusCode(200)
+            .body("ttl", equalTo("3000-01-31T10:10:10.000+0000"))
+            .when()
+            .patch(documentUrl)
     }
 
 

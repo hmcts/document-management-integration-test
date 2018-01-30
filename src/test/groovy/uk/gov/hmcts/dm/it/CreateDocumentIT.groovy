@@ -289,6 +289,27 @@ class CreateDocumentIT extends BaseIT {
             .post("/documents")
     }
 
+    @Test
+    void "CD11 (R1) As authenticated when i upload a file only first TTL will be taken into consideration"() {
+        givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .multiPart("roles", "caseworker")
+            .multiPart("ttl", "2018-10-31T10:10:10+0000")
+            .multiPart("ttl", "2018-01-31T10:10:10+0000")
+            .expect().log().all()
+            .statusCode(200)
+            .contentType(V1MediaTypes.V1_HAL_DOCUMENT_COLLECTION_MEDIA_TYPE_VALUE)
+            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_1))
+            .body("_embedded.documents[0].mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+            .body("_embedded.documents[0].classification", equalTo(Classifications.PUBLIC as String))
+            .body("_embedded.documents[0].roles[0]", equalTo("caseworker"))
+            .body("_embedded.documents[0].ttl", equalTo("2018-10-31T10:10:10.000+0000"))
+        .when()
+        .post("/documents")
+    }
+
 //    @Test
 //    void "CD9 As authenticated user I can not upload files that are larger than 100MB"() {
 //        givenRequest(CITIZEN)

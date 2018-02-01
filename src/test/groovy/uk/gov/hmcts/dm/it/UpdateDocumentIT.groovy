@@ -82,5 +82,32 @@ class UpdateDocumentIT  extends BaseIT {
             .patch(documentUrl)
     }
 
+    @Test
+    void "UD5 TTL will stay intact if a patch request is made without a new TTL in the body"() {
 
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN
+
+        givenRequest(CITIZEN)
+            .body([ttl: "3000-10-31T10:10:10+0000"])
+            .contentType(ContentType.JSON)
+            .expect()
+            .statusCode(200)
+            .body("ttl", equalTo("3000-10-31T10:10:10.000+0000"))
+            .when()
+            .patch(documentUrl)
+        givenRequest(CITIZEN)
+            .contentType(ContentType.JSON)
+            .expect()
+            .statusCode(400)
+            .body("ttl", equalTo(null))
+            .when()
+            .patch(documentUrl)
+
+        givenRequest(CITIZEN)
+            .expect()
+            .statusCode(200)
+            .body("ttl", equalTo("3000-10-31T10:10:10.000+0000"))
+            .when()
+            .get(documentUrl)
+    }
 }

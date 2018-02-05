@@ -122,16 +122,12 @@ class BaseIT {
         }
 
         request
-
     }
 
     def givenS2SRequest() {
-
-        def request = given().log().all()
-        request = request.header("serviceauthorization", serviceToken())
-                    .header("cache-control", "no-cache")
-
-        request
+        given().log().all()
+            .header("serviceauthorization", serviceToken())
+            .header("cache-control", "no-cache")
     }
 
     def expectRequest() {

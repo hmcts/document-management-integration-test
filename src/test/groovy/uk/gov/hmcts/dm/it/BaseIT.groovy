@@ -143,8 +143,7 @@ class BaseIT {
         token
     }
 
-    def serviceToken()
-    {
+    def serviceToken() {
         authTokenProvider.findServiceToken()
     }
 
@@ -248,8 +247,7 @@ class BaseIT {
         }
     }
 
-    def CreateAUserforTTL(username)
-    {
+    def CreateAUserforTTL(username) {
         Response response = givenRequest(username)
             .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
             .multiPart("classification", Classifications.PUBLIC as String)

@@ -351,4 +351,54 @@ class ReadDocumentIT extends BaseIT {
             .when()
             .get(documentUrl)
     }
+
+    @Test
+    void "R24 I created a document using S2S token and only caseworkers should be able to read that using api gateway"() {
+
+        def documentUrl = createDocumentUsingS2SToken()
+
+        createCaseWorker CASE_WORKER
+
+        givenRequest(CASE_WORKER)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+
+        createCaseWorkerCMC CASE_WORKER
+        givenRequest(CASE_WORKER)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+
+        createCaseWorkerSSCS CASE_WORKER
+        givenRequest(CASE_WORKER)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+    }
+
+    @Test
+    void "R25 I created a document using S2S token, but I must not access it as a citizen using api gateway"() {
+
+        def documentUrl = createDocumentUsingS2SToken()
+
+        createUser CITIZEN
+
+        givenRequest(CITIZEN)
+            .expect()
+            .statusCode(403)
+            .when()
+            .get(documentUrl)
+
+        createUser CITIZEN_2
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(403)
+            .when()
+            .get(documentUrl)
+    }
 }

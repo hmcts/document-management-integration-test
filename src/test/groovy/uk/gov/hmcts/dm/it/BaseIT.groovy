@@ -37,8 +37,11 @@ class BaseIT {
 
     FileUtils fileUtils = new FileUtils()
 
-    @Value('${base-urls.em-api}')
-    String emBaseUri
+    @Value('${base-urls.dm-api-gw-web}')
+    String dmApiGwBaseUri
+
+    @Value('${base_urls.dm-store-app}')
+    String dmStoreAppBaseUri
 
     @Value('${base-urls.idam-user}')
     String idamUserBaseUri
@@ -93,8 +96,7 @@ class BaseIT {
 
     @PostConstruct
     void init() {
-        RestAssured.baseURI = emBaseUri
-
+        RestAssured.baseURI = dmApiGwBaseUri
     }
 
 
@@ -120,7 +122,12 @@ class BaseIT {
         }
 
         request
+    }
 
+    def givenS2SRequest() {
+        given().log().all()
+            .header("serviceauthorization", serviceToken())
+            .header("cache-control", "no-cache")
     }
 
     def expectRequest() {
@@ -134,6 +141,10 @@ class BaseIT {
     def authToken(username) {
         def token = authTokenProvider.getTokens(username, PASSWORD).getUserToken()
         token
+    }
+
+    def serviceToken() {
+        authTokenProvider.findServiceToken()
     }
 
     def createDocument(username,  filename = null, classification = null, roles = null, metadata = null) {
@@ -152,12 +163,31 @@ class BaseIT {
             }
         }
 
-
         request
             .expect()
                 .statusCode(200)
             .when()
                 .post("/documents")
+    }
+
+    def createDocumentUsingS2SToken(filename = null, classification = null) {
+
+        def request = givenS2SRequest()
+            .multiPart("files", file( filename ?: "Attachment1.txt"), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("classification", classification ?: "PRIVATE")
+
+        def documentUrl = request.given().baseUri(dmStoreAppBaseUri)
+            .expect()
+            .statusCode(200)
+            .when()
+            .post("/documents")
+            .path("_embedded.documents[0]._links.self.href").toString()
+
+        if (documentUrl.startsWith(dmStoreAppBaseUri)){
+            documentUrl = documentUrl.replace(dmStoreAppBaseUri, dmApiGwBaseUri)
+        }
+
+        documentUrl
     }
 
     def createDocumentAndGetUrlAs(username, filename = null, classification = null, roles = null, metadata = null) {
@@ -217,8 +247,7 @@ class BaseIT {
         }
     }
 
-    def CreateAUserforTTL(username)
-    {
+    def CreateAUserforTTL(username) {
         Response response = givenRequest(username)
             .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
             .multiPart("classification", Classifications.PUBLIC as String)

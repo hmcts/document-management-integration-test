@@ -12,6 +12,7 @@ import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
 
 import static org.hamcrest.CoreMatchers.containsString
 import static org.hamcrest.CoreMatchers.not
+import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.equalTo
 
 /**
@@ -150,6 +151,23 @@ class ErrorPageIT extends BaseIT {
             .statusCode(401)
             .when()
             .get(documentUrl)
+    }
+
+    @Test
+    void "EP10 As an authenticated web user but not the owner of the file, post the newer version of the file, receive HTML error page with 403"() {
+
+        def url = createDocumentAndGetUrlAs CITIZEN
+
+        createUser CITIZEN
+
+        givenRequest(CITIZEN)
+            .accept(ContentType.XML)
+            .multiPart("file", file(ATTACHMENT_18), MediaType.APPLICATION_XML_VALUE)
+            .expect()
+            .body(not(containsString("<!DOCTYPE html>")))
+            .statusCode(406)
+            .when()
+            .post(url)
     }
 
 }

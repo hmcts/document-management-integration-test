@@ -17,13 +17,13 @@ import java.util.Optional;
 @Service
 public class AuthTokenProvider {
 
-//    private final String idamS2SBaseUri;
+    private final String idamS2SBaseUri;
     private final String idamUserBaseUrl;
 
     @Autowired
     public AuthTokenProvider(@Value("${base-urls.idam-s2s}") String idamS2SBaseUri,
                              @Value("${base-urls.idam-user}") String idamUserBaseUri) {
-//        this.idamS2SBaseUri = idamS2SBaseUri;
+        this.idamS2SBaseUri = idamS2SBaseUri;
         this.idamUserBaseUrl = idamUserBaseUri;
         System.out.println("IDAM User URL - " + idamUserBaseUri);
         System.out.println("IDAM S2S URL - " + idamS2SBaseUri);
@@ -51,13 +51,13 @@ public class AuthTokenProvider {
                 .statusCode(204);
     }
 
-//    private String findServiceToken() {
-//        return RestAssured
-//                .given().baseUri(idamS2SBaseUri)
-//                .body("microservice=sscs")
-//                .post("testing-support/lease?role=test&id=1&microservice=sscs")
-//                .andReturn().asString();
-//    }
+    public String findServiceToken() {
+        return RestAssured
+                .given().baseUri(idamS2SBaseUri)
+                .param("microservice", "em_gw")
+                .post("testing-support/lease")
+                .andReturn().asString();
+    }
 
     private String findUserToken(String email, String password) {
         final String encoded = Base64.getEncoder().encodeToString((email + ":" + password).getBytes());

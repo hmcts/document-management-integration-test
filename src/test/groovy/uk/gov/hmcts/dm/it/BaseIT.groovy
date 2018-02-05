@@ -37,8 +37,11 @@ class BaseIT {
 
     FileUtils fileUtils = new FileUtils()
 
-    @Value('${base-urls.em-api}')
-    String emBaseUri
+    @Value('${base-urls.dm-api-gw-web}')
+    String dbApiGwBaseUri
+
+    @Value('${base_urls.dm-store-app}')
+    String dmStoreBaseUri
 
     @Value('${base-urls.idam-user}')
     String idamUserBaseUri
@@ -93,8 +96,7 @@ class BaseIT {
 
     @PostConstruct
     void init() {
-        RestAssured.baseURI = emBaseUri
-
+        RestAssured.baseURI = dbApiGwBaseUri
     }
 
 
@@ -123,6 +125,16 @@ class BaseIT {
 
     }
 
+    def givenS2SRequest() {
+
+        def request = given().log().all()
+        request = request.header("serviceauthorization", serviceToken())
+                    .header("cache-control", "no-cache")
+                    .header("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")
+
+        request
+    }
+
     def expectRequest() {
         expect().log().all()
     }
@@ -134,6 +146,12 @@ class BaseIT {
     def authToken(username) {
         def token = authTokenProvider.getTokens(username, PASSWORD).getUserToken()
         token
+    }
+
+    def serviceToken()
+    {
+        def s2sToken = authTokenProvider.findServiceToken()
+        s2sToken
     }
 
     def createDocument(username,  filename = null, classification = null, roles = null, metadata = null) {
@@ -152,12 +170,31 @@ class BaseIT {
             }
         }
 
-
         request
             .expect()
                 .statusCode(200)
             .when()
                 .post("/documents")
+    }
+
+    def createDocumentUsingS2SToken(filename = null, classification = null) {
+
+        def request = givenS2SRequest()
+            .multiPart("files", file( filename ?: "Attachment1.txt"), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("classification", classification ?: "PRIVATE")
+
+        def documentUrl = request.given().baseUri(dmStoreBaseUri)
+            .expect()
+            .statusCode(200)
+            .when()
+            .post("/documents")
+            .path("_embedded.documents[0]._links.self.href").toString()
+
+        if (documentUrl.startsWith(dmStoreBaseUri)){
+            documentUrl = documentUrl.replace(dmStoreBaseUri, dbApiGwBaseUri)
+        }
+
+        documentUrl
     }
 
     def createDocumentAndGetUrlAs(username, filename = null, classification = null, roles = null, metadata = null) {

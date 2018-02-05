@@ -38,10 +38,10 @@ class BaseIT {
     FileUtils fileUtils = new FileUtils()
 
     @Value('${base-urls.dm-api-gw-web}')
-    String dbApiGwBaseUri
+    String dmApiGwBaseUri
 
     @Value('${base_urls.dm-store-app}')
-    String dmStoreBaseUri
+    String dmStoreAppBaseUri
 
     @Value('${base-urls.idam-user}')
     String idamUserBaseUri
@@ -96,7 +96,7 @@ class BaseIT {
 
     @PostConstruct
     void init() {
-        RestAssured.baseURI = dbApiGwBaseUri
+        RestAssured.baseURI = dmApiGwBaseUri
     }
 
 
@@ -130,7 +130,6 @@ class BaseIT {
         def request = given().log().all()
         request = request.header("serviceauthorization", serviceToken())
                     .header("cache-control", "no-cache")
-                    .header("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")
 
         request
     }
@@ -150,8 +149,7 @@ class BaseIT {
 
     def serviceToken()
     {
-        def s2sToken = authTokenProvider.findServiceToken()
-        s2sToken
+        authTokenProvider.findServiceToken()
     }
 
     def createDocument(username,  filename = null, classification = null, roles = null, metadata = null) {
@@ -183,15 +181,15 @@ class BaseIT {
             .multiPart("files", file( filename ?: "Attachment1.txt"), MediaType.TEXT_PLAIN_VALUE)
             .multiPart("classification", classification ?: "PRIVATE")
 
-        def documentUrl = request.given().baseUri(dmStoreBaseUri)
+        def documentUrl = request.given().baseUri(dmStoreAppBaseUri)
             .expect()
             .statusCode(200)
             .when()
             .post("/documents")
             .path("_embedded.documents[0]._links.self.href").toString()
 
-        if (documentUrl.startsWith(dmStoreBaseUri)){
-            documentUrl = documentUrl.replace(dmStoreBaseUri, dbApiGwBaseUri)
+        if (documentUrl.startsWith(dmStoreAppBaseUri)){
+            documentUrl = documentUrl.replace(dmStoreAppBaseUri, dmApiGwBaseUri)
         }
 
         documentUrl

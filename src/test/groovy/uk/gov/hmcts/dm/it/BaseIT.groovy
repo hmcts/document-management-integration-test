@@ -20,10 +20,6 @@ import uk.gov.hmcts.dm.it.config.TestContextConfiguration
 import static io.restassured.RestAssured.given
 import static io.restassured.RestAssured.expect
 import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.equalTo
 
 /**
  * Created by pawel on 16/10/2017.
@@ -143,6 +139,10 @@ class BaseIT {
         token
     }
 
+    def userId(token) {
+        authTokenProvider.findUserId(token).toString()
+    }
+
     def serviceToken() {
         authTokenProvider.findServiceToken()
     }
@@ -170,13 +170,18 @@ class BaseIT {
                 .post("/documents")
     }
 
-    def createDocumentUsingS2SToken(filename = null, classification = null) {
+    def createDocumentUsingS2STokenAndUserId(userId = 'user1') {
+        createDocumentUsingS2SToken userId
+    }
+
+    def createDocumentUsingS2SToken(filename = null, classification = null, userId) {
 
         def request = givenS2SRequest()
             .multiPart("files", file( filename ?: "Attachment1.txt"), MediaType.TEXT_PLAIN_VALUE)
             .multiPart("classification", classification ?: "PRIVATE")
 
         def documentUrl = request.given().baseUri(dmStoreAppBaseUri)
+            .header("user-id", userId)
             .expect()
             .statusCode(200)
             .when()

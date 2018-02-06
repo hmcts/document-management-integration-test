@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import io.restassured.response.ResponseOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,17 @@ public class AuthTokenProvider {
         authorization.then().statusCode(200);
         final Map<String, String> userResponse = authorization.andReturn().as(Map.class);
         return userResponse.get("access-token");
+    }
+
+    public int findUserId(String userToken) {
+        final Response details =
+            RestAssured.given()
+            .baseUri(idamUserBaseUrl)
+            .header("Authorization", "Bearer " + userToken)
+            .get("details");
+
+        details.then().statusCode(200);
+        return details.path("id");
     }
 
     public void deleteUser(String probateCaseworkerEmail) {

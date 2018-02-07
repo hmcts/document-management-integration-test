@@ -1,9 +1,13 @@
 package uk.gov.hmcts.dm.it
 
+import junit.framework.TestCase
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import org.springframework.test.context.junit4.SpringRunner
+import static org.hamcrest.Matchers.*
 
 /**
  * Created by pawel on 13/10/2017.
@@ -355,12 +359,13 @@ class ReadDocumentIT extends BaseIT {
     @Test
     void "R24 I created a document using S2S token and only caseworkers should be able to read that using api gateway"() {
 
-        def documentUrl = createDocumentUsingS2SToken()
-
+        def userId = "user2"
+        def documentUrl = createDocumentUsingS2STokenAndUserId userId
         createCaseWorker CASE_WORKER
 
         givenRequest(CASE_WORKER)
             .expect()
+            .body("createdBy", equalTo(userId))
             .statusCode(200)
             .when()
             .get(documentUrl)
@@ -368,6 +373,7 @@ class ReadDocumentIT extends BaseIT {
         createCaseWorkerCMC CASE_WORKER
         givenRequest(CASE_WORKER)
             .expect()
+            .body("createdBy", equalTo(userId))
             .statusCode(200)
             .when()
             .get(documentUrl)
@@ -375,6 +381,7 @@ class ReadDocumentIT extends BaseIT {
         createCaseWorkerSSCS CASE_WORKER
         givenRequest(CASE_WORKER)
             .expect()
+            .body("createdBy", equalTo(userId))
             .statusCode(200)
             .when()
             .get(documentUrl)
@@ -383,9 +390,9 @@ class ReadDocumentIT extends BaseIT {
     @Test
     void "R25 I created a document using S2S token, but I must not access it as a citizen using api gateway"() {
 
-        def documentUrl = createDocumentUsingS2SToken()
-
         createUser CITIZEN
+
+        def documentUrl = createDocumentUsingS2STokenAndUserId("user1")
 
         givenRequest(CITIZEN)
             .expect()
@@ -400,5 +407,29 @@ class ReadDocumentIT extends BaseIT {
             .statusCode(403)
             .when()
             .get(documentUrl)
+    }
+
+    @Test
+    void "R26 userId provided during data creation can be obtained as username in the audit trail"() {
+
+        createUser(CASE_WORKER)
+
+        def token = authToken CASE_WORKER
+        def userid = userId token
+        def documentUrl = createDocumentUsingS2STokenAndUserId userid
+
+        givenRequest(CASE_WORKER)
+            .expect()
+            .body("createdBy", equalTo(userid))
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+
+        Map<String, String> map = givenRequest(CASE_WORKER)
+            .when()
+            .get(documentUrl + "/auditEntries")
+            .path("_embedded.auditEntries[0]")
+
+        Assert.assertEquals(map.get("username"), userid)
     }
 }

@@ -69,6 +69,17 @@ public class AuthTokenProvider {
         return userResponse.get("access-token");
     }
 
+    public int findUserId(String userToken) {
+        final Response details =
+            RestAssured.given()
+            .baseUri(idamUserBaseUrl)
+            .header("Authorization", "Bearer " + userToken)
+            .get("details");
+
+        details.then().statusCode(200);
+        return details.path("id");
+    }
+
     public void deleteUser(String probateCaseworkerEmail) {
         RestAssured.given().log().all().baseUri(idamUserBaseUrl)
                 .delete("testing-support/accounts/" + probateCaseworkerEmail)

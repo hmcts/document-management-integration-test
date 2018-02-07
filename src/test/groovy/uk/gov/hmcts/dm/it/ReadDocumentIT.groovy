@@ -361,7 +361,6 @@ class ReadDocumentIT extends BaseIT {
 
         def userId = "user2"
         def documentUrl = createDocumentUsingS2STokenAndUserId userId
-
         createCaseWorker CASE_WORKER
 
         givenRequest(CASE_WORKER)

@@ -188,7 +188,7 @@ class BaseIT {
             .post("/documents")
             .path("_embedded.documents[0]._links.self.href").toString()
 
-        if (documentUrl.startsWith(dmStoreAppBaseUri)){
+        if (documentUrl.startsWith(dmStoreAppBaseUri)) {
             documentUrl = documentUrl.replace(dmStoreAppBaseUri, dmApiGwBaseUri)
         }
 

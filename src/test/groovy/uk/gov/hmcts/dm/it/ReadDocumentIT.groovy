@@ -432,4 +432,28 @@ class ReadDocumentIT extends BaseIT {
 
         Assert.assertEquals(map.get("username"), userid)
     }
+
+    @Test
+    void "R27 As a citizen if I upload a document to API Store then I should be able to access it using API Gateway"() {
+
+        createUser CITIZEN
+        def token = authToken CITIZEN
+        def userid = userId token
+
+        def documentUrl = createDocumentUsingS2STokenAndUserId userid
+
+        givenRequest(CITIZEN)
+            .expect()
+            .statusCode(200)
+            .when()
+            .get(documentUrl)
+
+        createUser CITIZEN_2
+
+        givenRequest(CITIZEN_2)
+            .expect()
+            .statusCode(403)
+            .when()
+            .get(documentUrl)
+    }
 }

@@ -427,7 +427,7 @@ class CreateDocumentIT extends BaseIT {
         def downloadedFileByteArray =  givenRequest(CITIZEN)
             .get(url).asByteArray()
 
-        def file = file("ThumbnailPDF.jpg").getBytes()
+        def file = file(THUMBNAIL_PDF).getBytes()
         Assert.assertTrue(Arrays.equals(downloadedFileByteArray, file))
     }
 
@@ -451,7 +451,7 @@ class CreateDocumentIT extends BaseIT {
         def downloadedFileByteArray =  givenRequest(CITIZEN)
             .get(url).asByteArray()
 
-        def file = file("ThumbnailBMP.jpg").getBytes()
+        def file = file(THUMBNAIL_BMP).getBytes()
         Assert.assertTrue(Arrays.equals(downloadedFileByteArray, file))
     }
 
@@ -476,7 +476,7 @@ class CreateDocumentIT extends BaseIT {
         def downloadedFileByteArray =  givenRequest(CITIZEN)
             .get(url).asByteArray()
 
-        def file = file("ThumbnailGIF.jpg").getBytes()
+        def file = file(THUMBNAIL_GIF).getBytes()
         Assert.assertTrue(Arrays.equals(downloadedFileByteArray, file))
     }
 

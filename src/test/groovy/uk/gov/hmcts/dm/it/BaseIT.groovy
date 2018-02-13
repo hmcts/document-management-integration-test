@@ -79,9 +79,9 @@ class BaseIT {
     final String ATTACHMENT_24 = 'mp4.mp4'
     final String ATTACHMENT_25 = 'tiff.tiff'
     final String ATTACHMENT_26 = 'bmp.bmp'
-    final String THUMBNAIL_PDF = 'ThumbnailPDF.jpg'
-    final String THUMBNAIL_BMP = 'ThumbnailBMP.jpg'
-    final String THUMBNAIL_GIF = 'ThumbnailGIF.jpg'
+    final String THUMBNAIL_PDF = 'thumbnailPDF.jpg'
+    final String THUMBNAIL_BMP = 'thumbnailBMP.jpg'
+    final String THUMBNAIL_GIF = 'thumbnailGIF.jpg'
 
 
     final String BAD_ATTACHMENT_1 = '1MB.exe'

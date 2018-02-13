@@ -161,13 +161,43 @@ class ErrorPageIT extends BaseIT {
         createUser CITIZEN
 
         givenRequest(CITIZEN)
+            .accept(ContentType.JSON)
+            .multiPart("file", file(ATTACHMENT_18), MediaType.APPLICATION_XML_VALUE)
+            .expect()
+            .body(not(containsString("<!DOCTYPE html>")))
+            .statusCode(422)
+            .when()
+            .post(url)
+    }
+
+    @Test
+    void "EP11 As an authenticated web user trying to post no document, receive HTML error page with 415"() {
+
+        givenRequest(CITIZEN)
             .accept(ContentType.XML)
             .multiPart("file", file(ATTACHMENT_18), MediaType.APPLICATION_XML_VALUE)
             .expect()
             .body(not(containsString("<!DOCTYPE html>")))
             .statusCode(406)
             .when()
-            .post(url)
+            .post('documents/')
     }
+
+//    @Test
+//    void "EP37 As an unauthenticated api user trying to access a document with accept JSON, receive JSON error"() {
+//
+//        def documentUrl = createDocumentAndGetUrlAs CITIZEN
+//
+//        def path1 = givenRequest()
+//            .accept(ContentType.JSON)
+//            .expect()
+//            .contentType(ContentType.JSON)
+////            .body(containsString())
+//            .statusCode(401)
+//            .when()
+//            .get(documentUrl).path(".")
+//
+//        System.out.println(path)
+//    }
 
 }

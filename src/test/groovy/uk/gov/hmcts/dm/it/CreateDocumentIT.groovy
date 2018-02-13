@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dm.it
 
 import io.restassured.response.Response
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -11,9 +12,13 @@ import uk.gov.hmcts.dm.it.utilities.Classifications
 import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
 import uk.gov.hmcts.dm.it.utilities.V1MimeTypes
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
+import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.equalTo
 
@@ -342,6 +347,137 @@ class CreateDocumentIT extends BaseIT {
             .statusCode(404)
             .when()
             .get(url)
+    }
+
+    @Test
+    void "CD13 (R1) As authenticated when i upload a text file or Tiff I get an icon in return"() {
+        def response = givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("files", file(ATTACHMENT_25), V1MimeTypes.IMAGE_TIF_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .expect().log().all()
+            .statusCode(200)
+            .contentType(V1MediaTypes.V1_HAL_DOCUMENT_COLLECTION_MEDIA_TYPE_VALUE)
+            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_1))
+            .body("_embedded.documents[0].mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+            .body("_embedded.documents[0].classification", equalTo(Classifications.PUBLIC as String))
+            .body("_embedded.documents[0]._links.thumbnail.href", containsString("thumbnail"))
+            .when()
+            .post("/documents")
+            .andReturn()
+            //.path("_embedded.documents[0]._links.thumbnail.href")
+
+        def notepadUrl = response.path("_embedded.documents[0]._links.thumbnail.href")
+        def tiffUrl = response.path("_embedded.documents[1]._links.thumbnail.href")
+
+        def notepadByteArray =  givenRequest(CITIZEN)
+        .get(notepadUrl).asByteArray()
+
+        def tiffByteArray =  givenRequest(CITIZEN)
+            .get(tiffUrl).asByteArray()
+
+        def file = file("ThumbnailNPad.jpg").getBytes()
+
+        Assert.assertTrue(Arrays.equals(notepadByteArray, file))
+        Assert.assertTrue(Arrays.equals(tiffByteArray, file))
+    }
+
+    @Test
+    void "CD14 (R1) As authenticated user when i upload a JPEG, it gets a thumbnail"() {
+        def url = givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_9), MediaType.IMAGE_JPEG_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .expect().log().all()
+            .statusCode(200)
+            .contentType(V1MediaTypes.V1_HAL_DOCUMENT_COLLECTION_MEDIA_TYPE_VALUE)
+            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_9))
+            .body("_embedded.documents[0].mimeType", equalTo(MediaType.IMAGE_JPEG_VALUE))
+            .body("_embedded.documents[0].classification", equalTo(Classifications.PUBLIC as String))
+            .body("_embedded.documents[0]._links.thumbnail.href", containsString("thumbnail"))
+            .when()
+            .post("/documents")
+            .path("_embedded.documents[0]._links.thumbnail.href")
+
+        def downloadedFileByteArray =  givenRequest(CITIZEN)
+            .get(url).asByteArray()
+
+        def file = file("ThumbnailJPG.jpg").getBytes()
+        Assert.assertTrue(Arrays.equals(downloadedFileByteArray, file))
+    }
+
+    @Test
+    void "CD15 (R1) As authenticated user when I upload a pdf, I can get the thumbnail of that pdf"() {
+        def url = givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_4), MediaType.APPLICATION_PDF_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .expect().log().all()
+            .statusCode(200)
+            .contentType(V1MediaTypes.V1_HAL_DOCUMENT_COLLECTION_MEDIA_TYPE_VALUE)
+            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_4))
+            .body("_embedded.documents[0].mimeType", equalTo(MediaType.APPLICATION_PDF_VALUE))
+            .body("_embedded.documents[0].classification", equalTo(Classifications.PUBLIC as String))
+            .body("_embedded.documents[0]._links.thumbnail.href", containsString("thumbnail"))
+            .when()
+            .post("/documents")
+            .path("_embedded.documents[0]._links.thumbnail.href")
+
+        def downloadedFileByteArray =  givenRequest(CITIZEN)
+            .get(url).asByteArray()
+
+        def file = file(THUMBNAIL_PDF).getBytes()
+        Assert.assertTrue(Arrays.equals(downloadedFileByteArray, file))
+    }
+
+    @Test
+    void "CD16 (R1) As authenticated user when I upload a bmp, I can get the thumbnail of that bmp"() {
+        def url = givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_26), V1MimeTypes.IMAGE_BMP_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .expect().log().all()
+            .statusCode(200)
+            .contentType(V1MediaTypes.V1_HAL_DOCUMENT_COLLECTION_MEDIA_TYPE_VALUE)
+            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_26))
+            .body("_embedded.documents[0].mimeType", equalTo(V1MimeTypes.IMAGE_BMP_VALUE))
+            .body("_embedded.documents[0].classification", equalTo(Classifications.PUBLIC as String))
+            .body("_embedded.documents[0]._links.thumbnail.href", containsString("thumbnail"))
+            .when()
+            .post("/documents")
+            .path("_embedded.documents[0]._links.thumbnail.href")
+
+        def downloadedFileByteArray =  givenRequest(CITIZEN)
+            .get(url).asByteArray()
+
+        def file = file(THUMBNAIL_BMP).getBytes()
+        Assert.assertTrue(Arrays.equals(downloadedFileByteArray, file))
+    }
+
+    @Test
+    void "CD17 (R1) As authenticated user when I upload a gif, I can get the thumbnail of that gif"() {
+
+        def url = givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_6), V1MimeTypes.IMAGE_GIF_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .expect().log().all()
+            .statusCode(200)
+            .contentType(V1MediaTypes.V1_HAL_DOCUMENT_COLLECTION_MEDIA_TYPE_VALUE)
+            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_6))
+            .body("_embedded.documents[0].mimeType", equalTo(V1MimeTypes.IMAGE_GIF_VALUE))
+            .body("_embedded.documents[0].classification", equalTo(Classifications.PUBLIC as String))
+            .body("_embedded.documents[0]._links.thumbnail.href", containsString("thumbnail"))
+            .when()
+            .post("/documents")
+            .path("_embedded.documents[0]._links.thumbnail.href")
+
+        def downloadedFileByteArray =  givenRequest(CITIZEN)
+            .get(url).asByteArray()
+
+        def file = file(THUMBNAIL_GIF).getBytes()
+        Assert.assertTrue(Arrays.equals(downloadedFileByteArray, file))
     }
 
 //    @Test

@@ -8,7 +8,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
+import uk.gov.hmcts.dm.it.utilities.Classifications
 import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
+import uk.gov.hmcts.dm.it.utilities.V1MimeTypes
 
 import static org.hamcrest.CoreMatchers.containsString
 import static org.hamcrest.CoreMatchers.not
@@ -199,5 +201,33 @@ class ErrorPageIT extends BaseIT {
 //
 //        System.out.println(path)
 //    }
+
+    @Test
+    void "EP12 As an authenticated user, when I post a SVG document I should get JSON response"() {
+
+        givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_10), V1MimeTypes.IMAGE_SVG_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .expect().log().all()
+            .statusCode(422)
+            .contentType(ContentType.JSON)
+            .when()
+            .post("/documents")
+    }
+
+    @Test
+    void "EP13 As an authenticated user, when I post a XML document I should get JSON response"() {
+
+        givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_18), V1MimeTypes.APPLICATION_XML_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "citizen")
+            .expect().log().all()
+            .statusCode(422)
+            .contentType(ContentType.JSON)
+            .when()
+            .post("/documents")
+    }
 
 }

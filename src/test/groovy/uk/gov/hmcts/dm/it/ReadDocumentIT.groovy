@@ -1,13 +1,12 @@
 package uk.gov.hmcts.dm.it
 
-import junit.framework.TestCase
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import org.springframework.test.context.junit4.SpringRunner
-import static org.hamcrest.Matchers.*
+
+import static org.hamcrest.Matchers.equalTo
 
 /**
  * Created by pawel on 13/10/2017.

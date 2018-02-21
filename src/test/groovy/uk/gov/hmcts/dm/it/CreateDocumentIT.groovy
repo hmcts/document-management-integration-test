@@ -3,7 +3,6 @@ package uk.gov.hmcts.dm.it
 import io.restassured.response.Response
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.http.MediaType
@@ -12,13 +11,9 @@ import uk.gov.hmcts.dm.it.utilities.Classifications
 import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
 import uk.gov.hmcts.dm.it.utilities.V1MimeTypes
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.equalTo
 
@@ -181,6 +176,7 @@ class CreateDocumentIT extends BaseIT {
             .multiPart("roles", "caseworker")
         .expect()
             .statusCode(422)
+            .body("error", equalTo("Please provide a valid classification: PRIVATE, RESTRICTED or PUBLIC"))
         .when()
             .post("/documents")
     }
@@ -195,6 +191,7 @@ class CreateDocumentIT extends BaseIT {
             .multiPart("roles", "caseworker")
         .expect()
             .statusCode(422)
+            .body("error", equalTo("Please provide a valid classification: PRIVATE, RESTRICTED or PUBLIC"))
         .when()
             .post("/documents")
     }
@@ -207,6 +204,7 @@ class CreateDocumentIT extends BaseIT {
             .multiPart("roles", "caseworker")
         .expect().log().all()
             .statusCode(422)
+            .body("error", equalTo("Provide some files to be uploaded."))
         .when()
             .post("/documents")
     }
@@ -267,6 +265,7 @@ class CreateDocumentIT extends BaseIT {
             .multiPart("classification", Classifications.PRIVATE as String)
         .expect()
             .statusCode(422)
+            .body("error", equalTo("Your upload contains a disallowed file type"))
         .when()
             .post("/documents")
     }
@@ -280,6 +279,7 @@ class CreateDocumentIT extends BaseIT {
             .multiPart("roles", "citizen")
             .expect()
             .statusCode(422)
+            .body("error", equalTo("Your upload contains a disallowed file type"))
             .when()
             .post("/documents")
     }
@@ -293,6 +293,7 @@ class CreateDocumentIT extends BaseIT {
             .multiPart("roles", "citizen")
             .expect()
             .statusCode(422)
+            .body("error", equalTo("Your upload contains a disallowed file type"))
             .when()
             .post("/documents")
     }

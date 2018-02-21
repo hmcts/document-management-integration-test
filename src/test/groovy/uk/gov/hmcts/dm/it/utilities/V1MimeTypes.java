@@ -11,7 +11,7 @@ public class V1MimeTypes extends MediaType implements Serializable {
 
 
     public final static MediaType APPLICATION_DOCX;
-    public final static String APPLICATION_DOCX_VALUE = "application/msword"; //"application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    public final static String APPLICATION_DOCX_VALUE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
     public final static MediaType APPLICATION_RTF;
     public final static String APPLICATION_RTF_VALUE = "application/rtf";
@@ -26,10 +26,10 @@ public class V1MimeTypes extends MediaType implements Serializable {
     public final static String IMAGE_SVG_VALUE = "image/svg+xml";
 
     public final static MediaType APPLICATION_PPT;
-    public final static String APPLICATION_PPT_VALUE = "application/vnd.ms-powerpoint";
+    public final static String APPLICATION_PPT_VALUE = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
 
     public final static MediaType APPLICATION_XLS;
-    public final static String APPLICATION_XLS_VALUE = "application/vnd.ms-excel";
+    public final static String APPLICATION_XLS_VALUE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     public final static MediaType APPLICATION_ODT;
     public final static String APPLICATION_ODT_VALUE = "application/vnd.oasis.opendocument.text";
@@ -41,7 +41,7 @@ public class V1MimeTypes extends MediaType implements Serializable {
     public final static String APPLICATION_ODP_VALUE = "application/vnd.oasis.opendocument.presentation";
 
     public final static MediaType AUDIO_WAV;
-    public final static String AUDIO_WAV_VALUE = "audio/wav";
+    public final static String AUDIO_WAV_VALUE = "audio/vnd.wave";
 
     public final static MediaType AUDIO_MIDI;
     public final static String AUDIO_MIDI_VALUE = "audio/midi";
@@ -77,7 +77,7 @@ public class V1MimeTypes extends MediaType implements Serializable {
     public final static String VIDEO_WEBM_VALUE = "video/webm";
 
     public final static MediaType VIDEO_MPEG;
-    public final static String VIDEO_MPEG_VALUE = "video/mpeg";
+    public final static String VIDEO_MPEG_VALUE = "video/mp4";
 
     static
     {

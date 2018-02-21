@@ -3,7 +3,6 @@ package uk.gov.hmcts.dm.it
 import io.restassured.response.Response
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.http.MediaType
@@ -12,13 +11,9 @@ import uk.gov.hmcts.dm.it.utilities.Classifications
 import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
 import uk.gov.hmcts.dm.it.utilities.V1MimeTypes
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.equalTo
 
@@ -39,7 +34,7 @@ class CreateDocumentIT extends BaseIT {
     void "CD1 (R1) As authenticated user upload 2 files with correct classification and some roles set"() {
         Response response = givenRequest(CITIZEN)
             .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
-            .multiPart("files", file(ATTACHMENT_5), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("files", file(ATTACHMENT_5), 'text/csv')
             .multiPart("files", file(ATTACHMENT_6), MediaType.IMAGE_GIF_VALUE)
             .multiPart("files", file(ATTACHMENT_7), MediaType.IMAGE_PNG_VALUE)
             .multiPart("files", file(ATTACHMENT_8), V1MimeTypes.IMAGE_TIF_VALUE)
@@ -55,7 +50,7 @@ class CreateDocumentIT extends BaseIT {
             .multiPart("files", file(ATTACHMENT_19), V1MimeTypes.AUDIO_WAV_VALUE)
             .multiPart("files", file(ATTACHMENT_20), V1MimeTypes.AUDIO_MIDI_VALUE)
             .multiPart("files", file(ATTACHMENT_21), V1MimeTypes.AUDIO_MPEG_VALUE)
-            .multiPart("files", file(ATTACHMENT_22), V1MimeTypes.AUDIO_WEBM_VALUE)
+            .multiPart("files", file(ATTACHMENT_22), V1MimeTypes.VIDEO_WEBM_VALUE) // ATTACHMENT_22 it's a video, should an audio?
             .multiPart("files", file(ATTACHMENT_23), V1MimeTypes.AUDIO_OGG_VALUE)
             .multiPart("files", file(ATTACHMENT_22), V1MimeTypes.VIDEO_WEBM_VALUE)
             .multiPart("files", file(ATTACHMENT_23), V1MimeTypes.VIDEO_OGG_VALUE)
@@ -76,7 +71,7 @@ class CreateDocumentIT extends BaseIT {
             .body("_embedded.documents[0].roles[1]", equalTo("citizen"))
             .body("_embedded.documents[0].ttl", equalTo("2018-10-31T10:10:10.000+0000"))
             .body("_embedded.documents[1].originalDocumentName", equalTo(ATTACHMENT_5))
-            .body("_embedded.documents[1].mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+            .body("_embedded.documents[1].mimeType", equalTo('text/csv'))
             .body("_embedded.documents[1].classification", equalTo(Classifications.PUBLIC as String))
             .body("_embedded.documents[1].roles[0]", equalTo("caseworker"))
             .body("_embedded.documents[1].roles[1]", equalTo("citizen"))
@@ -115,7 +110,7 @@ class CreateDocumentIT extends BaseIT {
             .body("_embedded.documents[16].originalDocumentName", equalTo(ATTACHMENT_21))
             .body("_embedded.documents[16].mimeType", equalTo(V1MimeTypes.AUDIO_MPEG_VALUE))
             .body("_embedded.documents[17].originalDocumentName", equalTo(ATTACHMENT_22))
-            .body("_embedded.documents[17].mimeType", equalTo(V1MimeTypes.AUDIO_WEBM_VALUE))
+            .body("_embedded.documents[17].mimeType", equalTo(V1MimeTypes.VIDEO_WEBM_VALUE))
             .body("_embedded.documents[18].originalDocumentName", equalTo(ATTACHMENT_23))
             .body("_embedded.documents[18].mimeType", equalTo(V1MimeTypes.AUDIO_OGG_VALUE))
             .body("_embedded.documents[19].originalDocumentName", equalTo(ATTACHMENT_22))

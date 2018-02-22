@@ -5,10 +5,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
-import sun.jvm.hotspot.utilities.Assert
 import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
 
-import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.equalTo
 
 /**

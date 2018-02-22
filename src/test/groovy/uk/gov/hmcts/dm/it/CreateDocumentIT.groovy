@@ -398,6 +398,21 @@ class CreateDocumentIT extends BaseIT {
         def file = file(THUMBNAIL_BMP).getBytes()
         Assert.assertTrue(Arrays.equals(downloadedFileByteArray, file))
     }
+
+
+
+    @Test
+    void "CD16 As authenticated user I cannot upload text file"() {
+        givenRequest(CITIZEN)
+            .multiPart("files", file(ATTACHMENT_1), V1MimeTypes.TEXT_PLAIN_VALUE)
+            .multiPart("classification", Classifications.PUBLIC as String)
+            .multiPart("roles", "caseworker")
+            .multiPart("roles", "citizen")
+            .expect()
+            .statusCode(422)
+            .when()
+            .post("/documents")
+    }
 // GIFS NOT ALLOWED ANYMORE
 //    @Test
 //    void "CD17 (R1) As authenticated user when I upload a gif, I can get the thumbnail of that gif"() {

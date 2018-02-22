@@ -402,7 +402,7 @@ class CreateDocumentIT extends BaseIT {
 
 
     @Test
-    void "CD16 As authenticated user I cannot upload text file"() {
+    void "CD17 As authenticated user I cannot upload text file"() {
         givenRequest(CITIZEN)
             .multiPart("files", file(ATTACHMENT_1), V1MimeTypes.TEXT_PLAIN_VALUE)
             .multiPart("classification", Classifications.PUBLIC as String)

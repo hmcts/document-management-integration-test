@@ -5,6 +5,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
+import sun.jvm.hotspot.utilities.Assert
 import uk.gov.hmcts.dm.it.utilities.V1MediaTypes
 
 import static org.hamcrest.Matchers.equalTo
@@ -29,7 +30,7 @@ class ReadContentVersionIT extends BaseIT {
         createUser CITIZEN
 
         documentUrl = createDocumentAndGetUrlAs CITIZEN
-        documentVersion = createDocumentContentVersion documentUrl, CITIZEN, ATTACHMENT_2
+        documentVersion = createDocumentContentVersion documentUrl, CITIZEN, ATTACHMENT_9_JPG
         documentVersionUrl = documentVersion.path('_links.self.href')
         documentVersionBinaryUrl = documentVersion.path('_links.binary.href')
     }
@@ -41,8 +42,8 @@ class ReadContentVersionIT extends BaseIT {
             .expect()
                 .statusCode(200)
                 .contentType(V1MediaTypes.V1_HAL_DOCUMENT_CONTENT_VERSION_MEDIA_TYPE_VALUE)
-                .body("originalDocumentName", equalTo(ATTACHMENT_2))
-                .body("mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+                .body("originalDocumentName", equalTo(ATTACHMENT_9_JPG))
+                .body("mimeType", equalTo(MediaType.IMAGE_JPEG_VALUE))
             .when()
                 .get(documentVersionUrl)
 
@@ -52,13 +53,13 @@ class ReadContentVersionIT extends BaseIT {
     @Test
     void "RCV2 As creator I read content version binary by URL"() {
 
-        givenRequest(CITIZEN)
+        assertByteArrayEquality ATTACHMENT_9_JPG, givenRequest(CITIZEN)
             .expect()
                 .statusCode(200)
-                .contentType(MediaType.TEXT_PLAIN_VALUE)
-                .body(equalTo("Attachment File 2 for test"))
+                .contentType(MediaType.IMAGE_JPEG_VALUE)
             .when()
                 .get(documentVersionBinaryUrl)
+            .asByteArray()
 
     }
 
@@ -106,12 +107,13 @@ class ReadContentVersionIT extends BaseIT {
 
         createCaseWorker CASE_WORKER
 
-        givenRequest(CASE_WORKER)
-                .expect()
+        assertByteArrayEquality ATTACHMENT_9_JPG, givenRequest(CASE_WORKER)
+            .expect()
                 .statusCode(200)
-                .body(equalTo("Attachment File 2 for test"))
-                .when()
+            .when()
                 .get(documentVersionBinaryUrl)
+            .asByteArray()
+
     }
 
     @Test
@@ -119,12 +121,12 @@ class ReadContentVersionIT extends BaseIT {
 
         createCaseWorkerCMC CASE_WORKER
 
-        givenRequest(CASE_WORKER)
+        assertByteArrayEquality ATTACHMENT_9_JPG, givenRequest(CASE_WORKER)
                 .expect()
-                .statusCode(200)
-                .body(equalTo("Attachment File 2 for test"))
+                    .statusCode(200)
                 .when()
-                .get(documentVersionBinaryUrl)
+                    .get(documentVersionBinaryUrl)
+                .asByteArray()
     }
 
     @Test
@@ -132,12 +134,12 @@ class ReadContentVersionIT extends BaseIT {
 
         createCaseWorkerSSCS CASE_WORKER
 
-        givenRequest(CASE_WORKER)
+        assertByteArrayEquality ATTACHMENT_9_JPG, givenRequest(CASE_WORKER)
                 .expect()
-                .statusCode(200)
-                .body(equalTo("Attachment File 2 for test"))
+                    .statusCode(200)
                 .when()
-                .get(documentVersionBinaryUrl)
+                    .get(documentVersionBinaryUrl)
+                .asByteArray()
     }
 
     @Test
@@ -145,12 +147,12 @@ class ReadContentVersionIT extends BaseIT {
 
         createCaseWorkerDivorce CASE_WORKER
 
-        givenRequest(CASE_WORKER)
+        assertByteArrayEquality ATTACHMENT_9_JPG, givenRequest(CASE_WORKER)
                 .expect()
-                .statusCode(200)
-                .body(equalTo("Attachment File 2 for test"))
+                    .statusCode(200)
                 .when()
-                .get(documentVersionBinaryUrl)
+                    .get(documentVersionBinaryUrl)
+                .asByteArray()
     }
 
 }

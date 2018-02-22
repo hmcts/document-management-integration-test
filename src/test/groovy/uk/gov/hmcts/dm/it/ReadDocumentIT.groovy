@@ -216,7 +216,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, 'caseworker')
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'RESTRICTED', ['caseworker']
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'RESTRICTED', ['caseworker']
 
         givenRequest(CITIZEN_2)
                 .expect()
@@ -231,7 +231,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, 'caseworker')
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PRIVATE', ['caseworker']
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PRIVATE', ['caseworker']
 
         givenRequest(CITIZEN_2)
                 .expect()
@@ -246,7 +246,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, 'caseworker')
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', ['caseworker']
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PUBLIC', ['caseworker']
 
         givenRequest(CITIZEN_2)
             .expect()
@@ -261,7 +261,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, 'caseworker')
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', ['citizen', 'caseworker']
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PUBLIC', ['citizen', 'caseworker']
 
         givenRequest(CITIZEN_2)
             .expect()
@@ -275,7 +275,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, null)
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', [null]
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PUBLIC', [null]
 
         givenRequest(CITIZEN_2)
             .expect()
@@ -289,7 +289,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, 'caseworker')
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', [null]
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PUBLIC', [null]
 
         givenRequest(CITIZEN_2)
             .expect()
@@ -304,7 +304,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, null)
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'PUBLIC', ['citizen']
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PUBLIC', ['citizen']
 
         givenRequest(CITIZEN_2)
             .expect()
@@ -318,7 +318,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, null)
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN_2, ATTACHMENT_1, 'PRIVATE', [null]
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN_2, ATTACHMENT_9_JPG, 'PRIVATE', [null]
 
         givenRequest(CITIZEN_2)
             .expect()
@@ -332,7 +332,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, 'citizen')
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_1, 'RESTRICTED', ['caseworker']
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'RESTRICTED', ['caseworker']
 
         givenRequest(CITIZEN_2)
                 .expect()
@@ -346,7 +346,7 @@ class ReadDocumentIT extends BaseIT {
 
         createUser(CITIZEN_2, null)
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN_2, ATTACHMENT_1, 'PRIVATE', ['caseworker']
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN_2, ATTACHMENT_9_JPG, 'PRIVATE', ['caseworker']
 
         givenRequest(CITIZEN_2)
             .expect()

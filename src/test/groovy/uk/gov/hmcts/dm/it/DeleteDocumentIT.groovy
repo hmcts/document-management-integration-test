@@ -128,13 +128,13 @@ class DeleteDocumentIT extends BaseIT {
         String documentContentUrl1 = response.path("_embedded.documents[0]._links.binary.href")
 
         givenRequest(CASE_WORKER)
-            .multiPart("file", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("file", file(ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
             .multiPart("ttl", "2018-01-31T10:10:10+0000")
             .expect().log().all()
             .statusCode(201)
             .contentType(V1MediaTypes.V1_HAL_DOCUMENT_CONTENT_VERSION_MEDIA_TYPE_VALUE)
-            .body("originalDocumentName", equalTo(ATTACHMENT_1))
-            .body("mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+            .body("originalDocumentName", equalTo(ATTACHMENT_9_JPG))
+            .body("mimeType", equalTo(MediaType.IMAGE_JPEG_VALUE))
             .when()
             .post(documentUrl1)
 
@@ -168,13 +168,13 @@ class DeleteDocumentIT extends BaseIT {
         String documentUrl1 = response.path("_embedded.documents[0]._links.self.href")
 
         givenRequest(CASE_WORKER)
-            .multiPart("file", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("file", file(ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
             .multiPart("ttl", "2018-01-31T10:10:10+0000")
             .expect().log().all()
             .statusCode(201)
             .contentType(V1MediaTypes.V1_HAL_DOCUMENT_CONTENT_VERSION_MEDIA_TYPE_VALUE)
-            .body("originalDocumentName", equalTo(ATTACHMENT_1))
-            .body("mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+            .body("originalDocumentName", equalTo(ATTACHMENT_9_JPG))
+            .body("mimeType", equalTo(MediaType.IMAGE_JPEG_VALUE))
             .when()
             .post(documentUrl1)
 

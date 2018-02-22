@@ -5,6 +5,7 @@ import io.restassured.response.Response
 import net.jcip.annotations.NotThreadSafe
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -56,12 +57,12 @@ class BaseIT {
     final String ATTACHMENT_1 = 'Attachment1.txt'
     final String ATTACHMENT_2 = 'Attachment2.txt'
     final String ATTACHMENT_3 = 'Attachment3.txt'
-    final String ATTACHMENT_4 = '1MB.PDF'
+    final String ATTACHMENT_4_PDF = '1MB.PDF'
     final String ATTACHMENT_5 = 'Attachment1.csv'
-    final String ATTACHMENT_6 = 'marbles.gif'
-    final String ATTACHMENT_7 = 'png.png'
-    final String ATTACHMENT_8 = 'tif.tif'
-    final String ATTACHMENT_9 = 'jpg.jpg'
+    final String ATTACHMENT_6_GIF = 'marbles.gif'
+    final String ATTACHMENT_7_PNG = 'png.png'
+    final String ATTACHMENT_8_TIF = 'tif.tif'
+    final String ATTACHMENT_9_JPG = 'jpg.jpg'
     final String ATTACHMENT_10 = 'svg.svg'
     final String ATTACHMENT_11 = 'rtf.rtf'
     final String ATTACHMENT_12 = 'docx.docx'
@@ -77,8 +78,9 @@ class BaseIT {
     final String ATTACHMENT_22 = 'webm.webm'
     final String ATTACHMENT_23 = 'ogg.ogg'
     final String ATTACHMENT_24 = 'mp4.mp4'
-    final String ATTACHMENT_25 = 'tiff.tiff'
-    final String ATTACHMENT_26 = 'bmp.bmp'
+    final String ATTACHMENT_25_TIFF = 'tiff.tiff'
+    final String ATTACHMENT_26_BMP = 'bmp.bmp'
+    final String ATTACHMENT_27_JPEG = 'jpeg.jpeg'
     final String THUMBNAIL_PDF = 'thumbnailPDF.jpg'
     final String THUMBNAIL_BMP = 'thumbnailBMP.jpg'
     final String THUMBNAIL_GIF = 'thumbnailGIF.jpg'
@@ -88,9 +90,9 @@ class BaseIT {
     final String BAD_ATTACHMENT_2 = 'Attachment3.zip'
     final String MAX_SIZE_ALLOWED_ATTACHMENT = '90MB.pdf'
     final String TOO_LARGE_ATTACHMENT = '100MB.pdf'
-    final String ILLEGAL_CHAR_FILE = 'uploadFile~@$!.txt'
-    final String ILLEGAL_CHAR_FILE1 = 'uploadFile~`\';][{}!@£$%^&()}{_-.txt'
-    final String ILLEGAL_CHAR_FILE2 = 'uploadFile9 @_-.txt'
+    final String ILLEGAL_NAME_FILE = 'uploadFile~@$!.jpg'
+    final String ILLEGAL_NAME_FILE1 = 'uploadFile~`\';][{}!@£$%^&()}{_-.jpg'
+    final String ILLEGAL_NAME_FILE2 = 'uploadFile9 @_-.jpg'
     final String VALID_CHAR_FILE1= 'uploadFile 9.txt'
 
     @PostConstruct
@@ -152,7 +154,7 @@ class BaseIT {
 
     def createDocument(username,  filename = null, classification = null, roles = null, metadata = null) {
         def request = givenRequest(username)
-                        .multiPart("files", file( filename ?: "Attachment1.txt"), MediaType.TEXT_PLAIN_VALUE)
+                        .multiPart("files", file( filename ?: ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
                         .multiPart("classification", classification ?: "PUBLIC")
 
         roles?.each { role ->
@@ -180,7 +182,7 @@ class BaseIT {
     def createDocumentUsingS2SToken(filename = null, classification = null, userId) {
 
         def request = givenS2SRequest()
-            .multiPart("files", file( filename ?: "Attachment1.txt"), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("files", file( filename ?: ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
             .multiPart("classification", classification ?: "PRIVATE")
 
         def documentUrl = request.given().baseUri(dmStoreAppBaseUri)
@@ -210,7 +212,7 @@ class BaseIT {
 
     def createDocumentContentVersion(documentUrl, username, filename = null) {
         givenRequest(username)
-            .multiPart("file", file( filename ?: ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("file", file( filename ?: ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
             .expect()
                 .statusCode(201)
             .when()
@@ -257,7 +259,7 @@ class BaseIT {
 
     def CreateAUserforTTL(username) {
         Response response = givenRequest(username)
-            .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("files", file(ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
             .multiPart("classification", Classifications.PUBLIC as String)
             .multiPart("roles", "citizen")
             .multiPart("roles", "caseworker")
@@ -265,8 +267,8 @@ class BaseIT {
             .expect().log().all()
             .statusCode(200)
             .contentType(V1MediaTypes.V1_HAL_DOCUMENT_COLLECTION_MEDIA_TYPE_VALUE)
-            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_1))
-            .body("_embedded.documents[0].mimeType", equalTo(MediaType.TEXT_PLAIN_VALUE))
+            .body("_embedded.documents[0].originalDocumentName", equalTo(ATTACHMENT_9_JPG))
+            .body("_embedded.documents[0].mimeType", equalTo(MediaType.IMAGE_JPEG_VALUE))
             .body("_embedded.documents[0].classification", equalTo(Classifications.PUBLIC as String))
             .body("_embedded.documents[0].roles[0]", equalTo("caseworker"))
             .body("_embedded.documents[0].ttl", equalTo("2018-10-31T10:10:10.000+0000"))
@@ -274,6 +276,10 @@ class BaseIT {
             .post("/documents")
 
         response
+    }
+
+    void assertByteArrayEquality(String fileName, byte[] response) {
+        Assert.assertTrue(Arrays.equals(file(fileName).bytes, response))
     }
 
 }

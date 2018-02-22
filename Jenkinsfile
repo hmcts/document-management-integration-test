@@ -44,13 +44,13 @@ node {
 //            sh "docker-compose down"
 //        }
 
-        stage('Run against Test') {
-            sh 'echo Running integration tests on Test'
-            build job: 'evidence/integration-tests-pipeline/master', parameters: [
-                [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: 'test'],
-                [$class: 'StringParameterValue', name: 'BRANCH', value: branchName]
-            ]
-        }
+//        stage('Run against Test') {
+//            sh 'echo Running integration tests on Test'
+//            build job: 'evidence/integration-tests-pipeline/master', parameters: [
+//                [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: 'test'],
+//                [$class: 'StringParameterValue', name: 'BRANCH', value: branchName]
+//            ]
+//        }
 
         if ('master' == "${env.BRANCH_NAME}") {
             stage('Publish Docker') {

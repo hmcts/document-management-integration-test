@@ -103,7 +103,7 @@ class ErrorPageIT extends BaseIT {
 
         givenRequest(CITIZEN_2)
                 .accept(ContentType.HTML)
-                .multiPart("file", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
+                .multiPart("file", file(ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
                 .expect()
                 .body("html.head.title", equalTo("403 Error"))
                 .statusCode(403)

@@ -126,7 +126,7 @@ class CreateDocumentIT extends BaseIT {
     @Test
     void "CD3 As authenticated user upload a file without classification"() {
         givenRequest(CITIZEN)
-            .multiPart("files", file(ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG)
+            .multiPart("files", file(ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
             .multiPart("roles", "citizen")
             .multiPart("roles", "caseworker")
         .expect()

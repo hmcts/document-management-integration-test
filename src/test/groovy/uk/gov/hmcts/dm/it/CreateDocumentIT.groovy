@@ -126,8 +126,7 @@ class CreateDocumentIT extends BaseIT {
     @Test
     void "CD3 As authenticated user upload a file without classification"() {
         givenRequest(CITIZEN)
-            .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
-            .multiPart("files", file(ATTACHMENT_2), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("files", file(ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG)
             .multiPart("roles", "citizen")
             .multiPart("roles", "caseworker")
         .expect()
@@ -140,8 +139,7 @@ class CreateDocumentIT extends BaseIT {
     @Test
     void "CD4 As authenticated user I upload files with incorrect classification"() {
         givenRequest(CITIZEN)
-            .multiPart("files", file(ATTACHMENT_1), MediaType.TEXT_PLAIN_VALUE)
-            .multiPart("files", file(ATTACHMENT_2), MediaType.TEXT_PLAIN_VALUE)
+            .multiPart("files", file(ATTACHMENT_9_JPG), MediaType.IMAGE_JPEG_VALUE)
             .multiPart("classification", "XYZ")
             .multiPart("roles", "citizen")
             .multiPart("roles", "caseworker")

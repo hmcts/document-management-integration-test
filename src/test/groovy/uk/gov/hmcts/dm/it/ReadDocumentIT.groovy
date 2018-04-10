@@ -2,6 +2,7 @@ package uk.gov.hmcts.dm.it
 
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.test.context.junit4.SpringRunner
@@ -227,17 +228,18 @@ class ReadDocumentIT extends BaseIT {
     }
 
     @Test
+    @Ignore
     void "R15 As authenticated user with a specific role I can't access a document if its CLASSIFICATION is PRIVATE and roles match"() {
 
-        def roles = ['not-a-caseworker']
+        createUser(CITIZEN_2, 'caseworker')
 
-        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PRIVATE', roles
+        def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PRIVATE', ['caseworker']
 
-        givenRequest(CITIZEN_2, roles)
-            .expect()
-            .statusCode(403)
-            .when()
-            .get(documentUrl)
+        givenRequest(CITIZEN_2)
+                .expect()
+                .statusCode(403)
+                .when()
+                .get(documentUrl)
 
     }
 
@@ -284,9 +286,11 @@ class ReadDocumentIT extends BaseIT {
             .get(documentUrl)
     }
 
-
     @Test
-    void "R19 As authenticated user with some role I cannot access a document if its CLASSIFICATION is public and roles does not match"() {
+    @Ignore
+    void "R19 As authenticated user with some role I can access a document if its CLASSIFICATION is public and roles does not match"() {
+
+        createUser(CITIZEN_2, 'caseworker')
 
         def documentUrl = createDocumentAndGetUrlAs CITIZEN, ATTACHMENT_9_JPG, 'PUBLIC', [null]
 
